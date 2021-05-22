@@ -13,7 +13,7 @@ int main(void)
 
     //moving_and_sleeping();
 
-    //colouring();
+    colouring();
 
     addstr("\npress any key to exit...");
     refresh();
