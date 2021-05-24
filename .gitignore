@@ -1,7 +1,8 @@
 # Prerequisites
 *.d
 
-/**/target/**
+**/target/
+*.png
 
 # Object files
 *.o
