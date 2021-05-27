@@ -8,7 +8,8 @@
 		"files.associations": {
 			"time.h": "c",
 			"curses.h": "c",
-			"ncurses.h": "c"
+			"ncurses.h": "c",
+			"unistd.h": "c"
 		}
 	}
 }
