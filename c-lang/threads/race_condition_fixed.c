@@ -7,7 +7,7 @@ volatile unsigned char data_ready_flag = 0;
 volatile unsigned char running = 0;
 
 /**
- * waits on the condvar and adds, prints when signalled)
+ * "Consumer", waits on the condition and upon receiving new date, printf's it.
  */
 void* reader(void* n) {
   pthread_t t_id = pthread_self();
@@ -25,18 +25,18 @@ void* reader(void* n) {
     }
 
     long l = *(long*)n;
-    printf("[Thread %lu] Got signal && data ready: %lu\n", t_id, l);
+    printf("[Consumer Thread %lu] Got signal & data is ready: %lu\n", t_id, l);
     data_ready_flag = 0;
     pthread_mutex_unlock(&m);
   }
 
-  printf("[Thread %lu] Exiting consumer\n", t_id);
+  printf("[Consumer Thread %lu] Exiting consumer\n", t_id);
   return (void*)NULL;
 }
 
 /**
- * pushes values on to a shared data structure
- * and pings the condvar
+ * "Producer" increments the value and signals on the condition. Once the value
+ * is equal to 10, it shuts down.
  */
 void* writer(void* n) {
   pthread_t t_id = pthread_self();
@@ -50,11 +50,11 @@ void* writer(void* n) {
     }
 
     (*(long*)n)++;
-    printf("[Thread %lu] Incr to: %lu\n", t_id, *(long*)n);
+    printf("[Producer Thread %lu] Incr to: %lu\n", t_id, *(long*)n);
 
     if (*(long*)n == 5) {
       running = 0;
-      printf("[Thread %lu] Set running %i\n", t_id, running);
+      printf("[Producer Thread %lu] Set running %i\n", t_id, running);
     }
 
     data_ready_flag = 1;
@@ -62,7 +62,7 @@ void* writer(void* n) {
     pthread_mutex_unlock(&m);
   }
 
-  printf("[Thread %lu] Exiting producer\n", t_id);
+  printf("[Producer Thread %lu] Exiting producer\n", t_id);
   return NULL;
 }
 
