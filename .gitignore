@@ -5,6 +5,8 @@
 !*.*
 !*/
 
+*.code-workspace
+
 # Prerequisites
 *.d
 
