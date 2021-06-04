@@ -1,0 +1,24 @@
+cmake_minimum_required(VERSION 3.2)
+
+project(timeserver C)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
+
+SET (CMAKE_C_FLAGS_INIT                "-Wall -std=c99")
+SET (CMAKE_C_FLAGS_DEBUG_INIT          "-O0 -g")
+SET (CMAKE_C_FLAGS_MINSIZEREL_INIT     "-Os -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELEASE_INIT        "-O3 -s -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
+
+set(HEADERS_DIR ${PROJECT_SOURCE_DIR}/headers)
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+
+include_directories(${HEADERS_DIR})
+file(GLOB SOURCES "src/*.c")
+
+add_executable( ${PROJECT_NAME} ${SOURCES} )
