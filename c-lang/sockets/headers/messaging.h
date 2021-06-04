@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define CMD_PUB_TIME "publish-time"
+#define CMD_PUB_TIME "publish-time\n"
 #define SOH "|"
 
 struct Msg {
@@ -14,6 +14,7 @@ struct Msg {
 struct Msg parse_msg(char* inp);
 
 struct Command {
+  // todo can we malloc this to allow arbitrary size?
   char request[100];
 };
 

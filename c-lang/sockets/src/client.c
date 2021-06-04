@@ -27,15 +27,16 @@ int start_client() {
 
   printf("Connected to [%s]\n", SOCK_PATH);
 
-  printf("Sending command: %s\n", CMD_PUB_TIME);
+  printf("Sending command: %s of len %lu\n", CMD_PUB_TIME,
+         strlen(CMD_PUB_TIME));
   // char* fake = "fake\n";
 
   // send(sock_fd, fake, strlen(fake), 0);
   // send(sock_fd, CMD_PUB_TIME, strlen(CMD_PUB_TIME), 0);
-  // if (send(sock_fd, CMD_PUB_TIME, strlen(CMD_PUB_TIME), 0)) {
-  //   perror("send");
-  //   return EXIT_FAILURE;
-  // }
+  if (!send(sock_fd, CMD_PUB_TIME, strlen(CMD_PUB_TIME), 0)) {
+    perror("send");
+    return EXIT_FAILURE;
+  }
 
   int is_error = 0, read_count;
   char str[100];

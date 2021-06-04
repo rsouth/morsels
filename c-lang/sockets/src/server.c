@@ -10,6 +10,7 @@ int* client_fds;
 
 struct sockaddr_un local, remote;
 
+// todo move to utils???
 void print_conn_array() {
   printf("Current connection array:\n");
   for (int i = 0; i < current_array_size; i++) {
@@ -256,8 +257,9 @@ int handle_connection(int remote_sock_fd) {
       struct Command cmd = parse_command(str);
       printf("Got Command: %s\n", cmd.request);
       handle_command(remote_sock_fd, &cmd);
-      // is_error = 1;  // todo this is not is_error, just like should_continue
+      is_error = 1;  // todo this is not is_error, just like should_continue
       // ?
+      printf("is_error set for %d\n", remote_sock_fd);
     }
 
   } while (!is_error);
@@ -267,13 +269,18 @@ int handle_connection(int remote_sock_fd) {
   return EXIT_SUCCESS;
 }
 
+// todo move this to messaging?
+int is_command(char* input, char* cmd) {
+  printf("Comparing %lu [%s] vs %lu [%s]\n", strlen(input), input, strlen(cmd),
+         cmd);
+  return strlen(input) == strlen(cmd) && strcmp(input, cmd) == 0;
+}
+
 int handle_command(int sock_fd, struct Command* command) {
   printf("Got command from %d -> %s\n", sock_fd, command->request);
   int is_error = 0;
-  if (strlen(command->request) == strlen(CMD_PUB_TIME) &&
-      strcmp(command->request, CMD_PUB_TIME) == 0) {
+  if (is_command(command->request, CMD_PUB_TIME)) {
     // do something
-
     struct timespec ts_ms = timespec_ms(2000);
     while (is_error == 0) {
       // sleep
@@ -301,8 +308,8 @@ int handle_command(int sock_fd, struct Command* command) {
 
   } else {
     printf("[%s] and [%s] NOT matched\n", command->request, CMD_PUB_TIME);
-    printf("Unrecognised command; closing connection\n");
-    close(sock_fd);
+    printf("Unrecognised command; returning...\n");  // closing connection\n");
+    // close(sock_fd);
   }
   return EXIT_SUCCESS;
 }
