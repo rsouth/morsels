@@ -10,6 +10,7 @@
 # Prerequisites
 *.d
 
+**/build/
 **/target/
 *.png
 
