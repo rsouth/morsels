@@ -10,6 +10,7 @@
 # Prerequisites
 *.d
 
+**/build/
 **/target/
 *.png
 
@@ -372,3 +373,4 @@ CTestTestfile.cmake
 _deps
 
 /build
+rust-lang/timeserver/.vscode/launch.json
