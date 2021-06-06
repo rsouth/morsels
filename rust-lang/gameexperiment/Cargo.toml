@@ -1,0 +1,25 @@
+[package]
+name = "gameexperiment"
+version = "0.1.0"
+authors = ["Richard South <southy98@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies.amethyst]
+version = "0.12"
+features = ["vulkan"]
+
+[dependencies]
+#amethyst = { path = "../../", features = ["optional"] }
+log = { version = "^0.4", features = ["serde"] }
+serde = "^1"
+derivative = "^2"
+lazy_static = "^1.4"
+serde-diff = "0.4"
+type-uuid = "0.1"
+glsl-layout = "0.4"
+ron = "^0.6"
+legion-prefab = { git = "https://github.com/amethyst/prefab", rev = "7c30249f106e6177549e223ca2823eec8ab6c70b" }
+prefab-format = { git = "https://github.com/amethyst/prefab", rev = "7c30249f106e6177549e223ca2823eec8ab6c70b" }
