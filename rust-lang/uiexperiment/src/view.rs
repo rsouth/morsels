@@ -1,7 +1,6 @@
 use crate::AppData;
 use druid::widget::{CrossAxisAlignment, Flex, FlexParams, Label, TextBox};
-use druid::{Color, FontDescriptor, FontFamily, FontWeight, Insets, Widget, WidgetExt};
-use env_logger::Env;
+use druid::{Color, FontDescriptor, FontFamily, Insets, Widget, WidgetExt};
 
 fn header_row() -> impl Widget<AppData> {
     Flex::row()
