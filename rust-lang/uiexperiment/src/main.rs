@@ -9,7 +9,8 @@ use druid::{
     Handled, Selector, Target, WindowConfig, WindowDesc, WindowId,
 };
 
-const GLOBAL_HOT_KEY: Selector<WindowId> = Selector::new("dev.untitled1.toggle-window-hotkey-pressed");
+const GLOBAL_HOT_KEY: Selector<WindowId> =
+    Selector::new("dev.untitled1.toggle-window-hotkey-pressed");
 
 pub fn main() {
     let main_window = WindowDesc::new(view::ui_builder())
