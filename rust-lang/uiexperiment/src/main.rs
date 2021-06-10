@@ -1,10 +1,12 @@
 mod command_box;
+mod command_processor;
 mod data;
 mod view;
 
 use std::thread;
 
 use crate::data::AppData;
+use druid::commands::CONFIGURE_WINDOW;
 use druid::{
     kurbo::Point, widget::prelude::*, AppDelegate, AppLauncher, Command, DelegateCtx, ExtEventSink,
     Handled, HotKey, KbKey, Selector, Target, WindowConfig, WindowDesc, WindowId,
@@ -12,6 +14,7 @@ use druid::{
 
 const GLOBAL_HOT_KEY: Selector<WindowId> = Selector::new("dev.untitled1.toggle-window-hotkey");
 const ESC_HOT_KEY: Selector = Selector::new("dev.untitled1.esc-hotkey");
+const EXEC_CMD: Selector<String> = Selector::new("dev.untitled1.execute-command");
 
 pub fn main() {
     let screen_rect = druid::Screen::get_display_rect();
@@ -76,20 +79,23 @@ impl AppDelegate<AppData> for Delegate {
     ) -> Handled {
         if let Some(number) = cmd.get(GLOBAL_HOT_KEY) {
             println!("Event sink got toggle visible event");
-
             if data.toggle_window() {
                 println!("Showing window {:?}", number);
                 let wc = WindowConfig::default().set_position(Point { x: -0.0, y: 0.0 });
-                _ctx.submit_command(druid::commands::CONFIGURE_WINDOW.with(wc).to(*number));
+                _ctx.submit_command(CONFIGURE_WINDOW.with(wc).to(*number));
             } else {
                 println!("Hiding window {:?}", number);
                 let wc = WindowConfig::default().set_position(Point {
                     x: -10000.0,
                     y: 100.0,
                 });
-                _ctx.submit_command(druid::commands::CONFIGURE_WINDOW.with(wc).to(*number));
+                _ctx.submit_command(CONFIGURE_WINDOW.with(wc).to(*number));
             }
 
+            Handled::Yes
+        } else if let Some(_) = cmd.get(EXEC_CMD) {
+            println!("Execute Command: {}", data.command_text);
+            command_processor::process(data.command_text.to_string());
             Handled::Yes
         } else {
             Handled::No
@@ -126,25 +132,3 @@ fn global_hotkey_listener(sink: ExtEventSink, winid: WindowId) {
         hk.listen();
     });
 }
-
-// struct WindowController;
-//
-// impl Controller<AppData, Window<>> for WindowController {
-//     fn event(
-//         &mut self,
-//         child: &mut Label<u64>,
-//         ctx: &mut EventCtx,
-//         event: &Event,
-//         data: &mut u64,
-//         env: &Env,
-//     ) {
-//         match event {
-//             Event::Command(cmd) if cmd.is( ... ) => {
-//                 // do stuff...
-//                 ctx.window().close();
-//                 child.event(ctx, event, data, env)
-//             },
-//             _ => child.event(ctx, event, data, env),
-//         }
-//     }
-// }

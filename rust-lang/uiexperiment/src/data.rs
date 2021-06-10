@@ -8,6 +8,7 @@ pub struct AppData {
     display_window_y: f64,
     window_visible: bool,
     current_text: Arc<String>,
+    pub(crate) command_text: Arc<String>,
 }
 
 impl Default for AppData {
@@ -17,6 +18,7 @@ impl Default for AppData {
             display_window_y: 0.0,
             window_visible: true,
             current_text: Arc::new("".to_string()),
+            command_text: Arc::new("".to_string()),
         }
     }
 }

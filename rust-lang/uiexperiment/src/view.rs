@@ -37,7 +37,7 @@ fn command_row() -> impl Widget<AppData> {
         .with_flex_child(
             TextBox::new()
                 .with_placeholder("[Esc] for command mode; :e to edit previous")
-                .lens(AppData::current_text)
+                .lens(AppData::command_text)
                 .controller(CommandBoxController::default())
                 .expand_width(),
             FlexParams::new(1., CrossAxisAlignment::Start),
