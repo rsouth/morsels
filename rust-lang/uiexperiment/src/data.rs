@@ -2,7 +2,7 @@ use druid::Data;
 use druid::Lens;
 use std::sync::Arc;
 
-#[derive(Clone, Data, Lens)]
+#[derive(Debug, Clone, Data, Lens)]
 pub struct AppData {
     display_window_x: f64,
     display_window_y: f64,
@@ -22,7 +22,7 @@ impl Default for AppData {
 }
 
 impl AppData {
-    pub fn toggle_window(&mut self) -> bool {
+    pub(crate) fn toggle_window(&mut self) -> bool {
         self.window_visible = !self.window_visible;
         self.window_visible
     }

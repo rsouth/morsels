@@ -1,3 +1,4 @@
+mod command_box;
 mod data;
 mod view;
 
@@ -6,11 +7,11 @@ use std::thread;
 use crate::data::AppData;
 use druid::{
     kurbo::Point, widget::prelude::*, AppDelegate, AppLauncher, Command, DelegateCtx, ExtEventSink,
-    Handled, Selector, Target, WindowConfig, WindowDesc, WindowId,
+    Handled, HotKey, KbKey, Selector, Target, WindowConfig, WindowDesc, WindowId,
 };
 
-const GLOBAL_HOT_KEY: Selector<WindowId> =
-    Selector::new("dev.untitled1.toggle-window-hotkey-pressed");
+const GLOBAL_HOT_KEY: Selector<WindowId> = Selector::new("dev.untitled1.toggle-window-hotkey");
+const ESC_HOT_KEY: Selector = Selector::new("dev.untitled1.esc-hotkey");
 
 pub fn main() {
     let screen_rect = druid::Screen::get_display_rect();
@@ -27,7 +28,7 @@ pub fn main() {
     let window_id = main_window.id;
     let app = AppLauncher::with_window(main_window)
         .log_to_console()
-        .delegate(Delegate {});
+        .delegate(Delegate::default());
 
     let event_sink = app.get_external_handle();
     global_hotkey_listener(event_sink, window_id);
@@ -35,7 +36,16 @@ pub fn main() {
     app.launch(data).expect("launch failed");
 }
 
-struct Delegate;
+struct Delegate {
+    hot_key_esc: HotKey,
+}
+impl Default for Delegate {
+    fn default() -> Self {
+        Delegate {
+            hot_key_esc: HotKey::new(None, KbKey::Escape),
+        }
+    }
+}
 impl AppDelegate<AppData> for Delegate {
     fn event(
         &mut self,
@@ -46,6 +56,13 @@ impl AppDelegate<AppData> for Delegate {
         _env: &Env,
     ) -> Option<Event> {
         // println!("Event: {:?}", event);
+        match &event {
+            Event::KeyDown(key) if self.hot_key_esc.matches(key) => {
+                _ctx.submit_command(Command::from(ESC_HOT_KEY));
+            }
+            _ => (),
+        };
+
         Some(event)
     }
 
