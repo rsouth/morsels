@@ -13,11 +13,15 @@ const GLOBAL_HOT_KEY: Selector<WindowId> =
     Selector::new("dev.untitled1.toggle-window-hotkey-pressed");
 
 pub fn main() {
+    let screen_rect = druid::Screen::get_display_rect();
+
+    let win_height = screen_rect.height() * 0.777;
     let main_window = WindowDesc::new(view::ui_builder())
         .title("/dev/swap sandbox")
         // .transparent(true)
         // .show_titlebar(false)
-        .window_size((400_f64, 800_f64));
+        .set_position((100.0, screen_rect.height() - win_height - 100.0))
+        .window_size((screen_rect.width() * 0.333, win_height));
 
     let data = AppData::default();
     let window_id = main_window.id;

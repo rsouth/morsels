@@ -9,15 +9,27 @@ fn header_row() -> impl Widget<AppData> {
                 .with_font(FontDescriptor::new(FontFamily::MONOSPACE).with_size(16.0)),
             FlexParams::new(1.0, CrossAxisAlignment::Start),
         )
-        .border(Color::PURPLE, 1.0)
 }
 
 fn text_area() -> impl Widget<AppData> {
     TextBox::multiline().lens(AppData::current_text).expand()
 }
 
-fn bottom_row() -> impl Widget<AppData> {
-    Label::new("stattus bar".to_string()).with_font(FontDescriptor::new(FontFamily::MONOSPACE))
+fn command_row() -> impl Widget<AppData> {
+    Flex::row()
+        .with_flex_child(
+            TextBox::new()
+                .with_placeholder("[Esc] for command mode; :e to edit previous")
+                .lens(AppData::current_text)
+                .expand_width(),
+            FlexParams::new(1., CrossAxisAlignment::Start),
+        )
+        .with_default_spacer()
+        .with_child(
+            // TODO Lens in to AppData::status of some kind (window status? command status?)
+            Label::new("Status Text".to_string())
+                .with_font(FontDescriptor::new(FontFamily::MONOSPACE)),
+        )
 }
 
 pub fn ui_builder() -> impl Widget<AppData> {
@@ -28,10 +40,13 @@ pub fn ui_builder() -> impl Widget<AppData> {
         // text box
         .with_flex_child(text_area(), 1.0)
         .with_default_spacer()
-        // bottom row
-        .with_child(bottom_row())
+        // command row
+        .with_child(command_row())
+        .with_default_spacer()
+        // // status row
+        // .with_child(bottom_row())
         .padding(Insets::new(10_f64, 10_f64, 10_f64, 10_f64))
-        .debug_paint_layout()
+        // .debug_paint_layout()
 }
 
 // fn label_widget<T: Data>(widget: impl Widget<T> + 'static, label: &str) -> impl Widget<T> {
