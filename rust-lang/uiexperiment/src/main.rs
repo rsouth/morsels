@@ -18,14 +18,15 @@ const ESC_HOT_KEY: Selector = Selector::new("dev.untitled1.esc-hotkey");
 const EXEC_CMD: Selector = Selector::new("dev.untitled1.execute-command");
 
 pub fn main() {
-    let screen_rect = druid::Screen::get_display_rect();
+    // let screen_rect = druid::Screen::get_display_rect();
+    let screen_rect = druid::Screen::get_monitors()[0].virtual_work_rect();
 
     let win_height = screen_rect.height() * 0.777;
     let main_window = WindowDesc::new(view::ui_builder())
         .title("/dev/swap sandbox")
         // .transparent(true)
         // .show_titlebar(false)
-        .set_position((100.0, screen_rect.height() - win_height - 100.0))
+        .set_position((100.0, screen_rect.height() - win_height - 10.0))
         .window_size((screen_rect.width() * 0.333, win_height));
 
     let data = AppData::default();
