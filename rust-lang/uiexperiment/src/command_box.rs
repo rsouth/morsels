@@ -20,7 +20,7 @@ impl<T, W: Widget<T>> Controller<T, W> for CommandBoxController {
             // Enter to execute Command
             Event::KeyDown(key_event) if key_event.key == KbKey::Enter => {
                 println!("command_box event(Enter) -> {:?}", key_event);
-                ctx.submit_command(EXEC_CMD.with("".to_string()).to(Target::Auto));
+                ctx.submit_command(EXEC_CMD.to(Target::Auto));
                 ctx.set_handled();
             }
 

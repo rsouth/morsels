@@ -1,20 +1,21 @@
-mod command_box;
-mod command_processor;
-mod data;
-mod view;
-
 use std::thread;
 
-use crate::data::AppData;
 use druid::commands::CONFIGURE_WINDOW;
 use druid::{
     kurbo::Point, widget::prelude::*, AppDelegate, AppLauncher, Command, DelegateCtx, ExtEventSink,
     Handled, HotKey, KbKey, Selector, Target, WindowConfig, WindowDesc, WindowId,
 };
 
+use crate::data::AppData;
+
+mod command_box;
+mod command_processor;
+mod data;
+mod view;
+
 const GLOBAL_HOT_KEY: Selector<WindowId> = Selector::new("dev.untitled1.toggle-window-hotkey");
 const ESC_HOT_KEY: Selector = Selector::new("dev.untitled1.esc-hotkey");
-const EXEC_CMD: Selector<String> = Selector::new("dev.untitled1.execute-command");
+const EXEC_CMD: Selector = Selector::new("dev.untitled1.execute-command");
 
 pub fn main() {
     let screen_rect = druid::Screen::get_display_rect();
@@ -31,7 +32,7 @@ pub fn main() {
     let window_id = main_window.id;
     let app = AppLauncher::with_window(main_window)
         .log_to_console()
-        .delegate(Delegate::default());
+        .delegate(Delegate::new(window_id));
 
     let event_sink = app.get_external_handle();
     global_hotkey_listener(event_sink, window_id);
@@ -40,11 +41,13 @@ pub fn main() {
 }
 
 struct Delegate {
+    window_id: WindowId,
     hot_key_esc: HotKey,
 }
-impl Default for Delegate {
-    fn default() -> Self {
+impl Delegate {
+    fn new(winid: WindowId) -> Self {
         Delegate {
+            window_id: winid,
             hot_key_esc: HotKey::new(None, KbKey::Escape),
         }
     }
@@ -95,7 +98,10 @@ impl AppDelegate<AppData> for Delegate {
             Handled::Yes
         } else if let Some(_) = cmd.get(EXEC_CMD) {
             println!("Execute Command: {}", data.command_text);
-            command_processor::process(data.command_text.to_string());
+            let command = data.command_text.clone();
+            data.command_text.clear();
+
+            command_processor::process(_ctx, command, self.window_id);
             Handled::Yes
         } else {
             Handled::No
