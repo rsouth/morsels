@@ -5,8 +5,9 @@
 autorun=false
 project=''
 
-assembler=yasm
-linker=ld.lld
+assembler=nasm
+linker=ld
+#linker=ld.lld
 
 usage() {
 	echo "Usage: $0 -f PROJECT [-r]"
@@ -31,11 +32,11 @@ fi
 
 shift $(( OPTIND - 1 ))
 
-echo "Building ${project} with:"
-echo "\tProject: ${project} (${project}.asm)"
-echo "\tAutorun: ${autorun}"
-echo "\tAssembler: ${assembler}"
-echo "\tLinker: ${linker}"
+echo -e "Building ${project} with:"
+echo -e "\tProject: ${project} (${project}.asm)"
+echo -e "\tAutorun: ${autorun}"
+echo -e "\tAssembler: ${assembler}"
+echo -e "\tLinker: ${linker}"
 
 # check input file exists
 if [ ! -f ${project}.asm ]; then
@@ -44,7 +45,8 @@ if [ ! -f ${project}.asm ]; then
 fi
 
 # assemble
-ASSEMBLE_CMD="${assembler} -f elf64 -g dwarf2 ${project}.asm"
+#ASSEMBLE_CMD="${assembler} -f elf64 -g dwarf2 ${project}.asm"
+ASSEMBLE_CMD="${assembler} -g -F dwarf -f elf64 ${project}.asm"
 echo "Running '${ASSEMBLE_CMD}'"
 `${ASSEMBLE_CMD}`
 s=$?
@@ -61,7 +63,7 @@ echo "Running '${LINK_CMD}'"
 `${LINK_CMD}`
 
 # show files...
-ls -hnug| grep ${project}
+ls -hnug | grep ${project}
 
 if [ ${autorun} = true ]; then
 	echo "Running ${project}"
