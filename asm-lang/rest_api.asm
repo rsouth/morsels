@@ -11,6 +11,8 @@ section .data
     s_goodbye       db      '🍒',0xa
     l_goodbye       equ     $-s_goodbye
 
+    d_port          dw     80808
+
 section .bss
     name    resb    5
     buffer  resb    255     ; variable to store request headers
@@ -47,8 +49,12 @@ _start:
     mov rdx,len
     call _print
 
-; == init vars ==================================
-; TODO should I be xor-ing the registers first?
+; ===============================================
+
+    xor rax,rax
+    xor rdi,rdi
+    xor rsi,rsi
+    xor rdx,rdx
 
 ; == create socket ==============================
 _socket:
@@ -58,7 +64,7 @@ _socket:
     ; %rdi          %rsi        %rdx
     ; int family    int type    int protocol
 
-    ; AF_INET = 2 (https://github.com/torvalds/linux/blob/master/include/linux/socket.h)
+                        ; AF_INET = 2 (https://github.com/torvalds/linux/blob/master/include/linux/socket.h)
     mov rax,41          ; socket()
     mov rdi,2           ; family (2 == AF_INET / PF_INET)
     mov rsi,1           ; type (1==TCP https://github.com/torvalds/linux/blob/master/include/linux/socket.h)
@@ -73,12 +79,17 @@ _bind:
     ; %rdi      %rsi                                %rdx
     ; int fd    struct sockaddr __user * umyaddr    int addrlen
 
-    mov r10,rax
-    mov rax,49          ; bind()
-    pop rdi             ; set rdi to fd
-    mov rsi,0x1152      ; port 41295 todo: fix this.
-    mov rdx,16          ; addrlen
-    syscall
+    xchg rdi,rax       ; 'backup' fd to rdi
+
+    xor r9,r9           ; ensure r9 == 0
+    push r9             ; same as 0.0.0.0
+    push dword 0x204E   ; port number (LSB, 0x204E  is 20000)
+    push word 0x02      ; AF_INET - which is 0x02
+
+    mov rsi,rsp        ; moving stack address to rsi
+    mov rdx,16         ; 16 byts long (or 32bit)
+    mov rax,49         ; set rax to sys_bind
+    syscall             ; make the call to bind
 
     ; push rax      ; store fd
 
@@ -91,7 +102,7 @@ _listen:
     ; int fd    int backlog
 
     mov rax,50          ; listen
-    mov rdi,r10         ; rdi == fd to flag for listening
+    ; mov rdi,r10         ; rdi == fd to flag for listening
     ; mov r10,rdi
     mov rsi,5           ; 5 conns in backlog
     syscall
@@ -105,7 +116,7 @@ _accept:
     ; int fd    struct sockaddr __user * upeer_sockaddr int __user * upeer_addrlen
 
     mov rax,43
-    mov rdi,r10         ; set rdi to the fd
+    ; mov rdi,r10         ; set rdi to the fd
     xor rsi,rsi         ; clear rsi and rdx
     xor rdx,rdx
     syscall
